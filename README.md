@@ -70,6 +70,34 @@ The project does not intentionally collect or transmit the contents of user docu
 
 The project is currently under active development. Features, architecture, and documentation may change before the first stable release.
 
+## Architecture
+
+The project follows a layered architecture designed to separate the user interface, application logic, domain logic, and infrastructure concerns.
+
+```text
+┌─────────────────────────────┐
+│       Presentation          │
+│        WPF / Avalonia       │
+└──────────────┬──────────────┘
+               │
+┌──────────────▼──────────────┐
+│        Application          │
+│      Use Cases / Logic      │
+└──────────────┬──────────────┘
+               │
+┌──────────────▼──────────────┐
+│           Domain            │
+│     Business Rules / Models │
+└──────────────┬──────────────┘
+               │
+┌──────────────▼──────────────┐
+│        Infrastructure       │
+│ PDF / File System / Logging │
+└─────────────────────────────┘
+```
+
+More detailed architectural information can be found in [`docs/architecture`](docs/architecture/).
+
 ## License
 
 This project is licensed under the **MIT License**.
