@@ -20,13 +20,13 @@ FileManiac will use a layered architecture based on Clean Architecture principle
                  ┌──────────────────────┐
                  │     Application      │
                  └──────────┬───────────┘
-                            │
-                            ▼
-                 ┌──────────────────────┐
-                 │        Domain        │
-                 └──────────────────────┘
-                            ▲
-                            │
+                            │           ▲     
+                            ▼           |
+                 ┌────────────────────┐ |
+                 │       Domain       │ |
+                 └────────────────────┘ |
+                            ▲           |
+                            │           |
                  ┌──────────┴───────────┐
                  │    Infrastructure    │
                  └──────────────────────┘

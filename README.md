@@ -83,14 +83,14 @@ The project follows a layered architecture designed to separate the user interfa
 ┌──────────────▼──────────────┐
 │        Application          │
 │      Use Cases / Logic      │
-└──────────────┬──────────────┘
-               │
-┌──────────────▼──────────────┐
-│           Domain            │
-│     Business Rules / Models │
-└──────────────┬──────────────┘
-               │
-┌──────────────▼──────────────┐
+└──────────────┬─────────────▲┘
+               │             |
+┌──────────────▼───────────┐ |
+│        Domain            │ |
+│  Business Rules / Models │ |
+└──────────────▲───────────┘ |
+               │             |
+┌─────────────────────────────┐
 │        Infrastructure       │
 │ PDF / File System / Logging │
 └─────────────────────────────┘
