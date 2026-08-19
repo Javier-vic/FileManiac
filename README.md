@@ -1,20 +1,20 @@
 # FileManiac
 
-A privacy-focused desktop application for managing PDF documents locally, without uploading files to external services.
+A privacy-focused, local-first application for managing PDF documents without uploading files to external services.
 
 ## Overview
 
-FileManiac is a desktop application designed to provide common PDF management and conversion tools while keeping user documents on the local computer.
+FileManiac is designed to provide common PDF management and conversion tools while keeping user documents on the local computer.
 
 Many online PDF tools require users to upload their documents to third-party servers. This can be unsuitable when working with confidential, sensitive, or private information.
 
-This project aims to provide a local alternative where PDF processing is performed directly on the user's computer.
+This project aims to provide a local alternative where PDF processing is performed directly on the user's computer. It runs as a Spring Boot backend (embedded server, bound to `localhost` only) paired with an Angular frontend, packaged together so no data ever leaves the machine.
 
 ## Goals
 
 * Process documents locally.
 * Avoid uploading user files to external services.
-* Provide common PDF management operations through a simple desktop interface.
+* Provide common PDF management operations through a simple, browser-based local interface.
 * Work without requiring an Internet connection for core functionality.
 * Provide a free and privacy-focused alternative to online PDF tools.
 * Maintain a modular and testable codebase.
@@ -60,7 +60,7 @@ This project aims to provide a local alternative where PDF processing is perform
 
 Privacy is one of the main design principles of this project.
 
-FileManiac is designed to process documents locally. The application does not require users to upload their files to a remote service in order to perform its core operations.
+FileManiac is designed to process documents locally. The application does not require users to upload their files to a remote service in order to perform its core operations. The backend server only listens on `localhost`, so it is never reachable from outside the user's machine.
 
 The project does not intentionally collect or transmit the contents of user documents.
 
@@ -72,12 +72,16 @@ The project is currently under active development. Features, architecture, and d
 
 ## Architecture
 
-The project follows a layered architecture designed to separate the user interface, application logic, domain logic, and infrastructure concerns.
+The project follows a layered architecture (Clean Architecture) designed to separate the frontend, API, application logic, domain logic, and infrastructure concerns.
 
 ```text
 ┌─────────────────────────────┐
-│       Presentation          │
-│        WPF / Avalonia       │
+│    Frontend (Angular)       │
+└──────────────┬──────────────┘
+               │ HTTP (localhost only)
+┌──────────────▼──────────────┐
+│      API (Controllers)      │
+│         Spring Boot         │
 └──────────────┬──────────────┘
                │
 ┌──────────────▼──────────────┐
@@ -95,6 +99,8 @@ The project follows a layered architecture designed to separate the user interfa
 │ PDF / File System / Logging │
 └─────────────────────────────┘
 ```
+
+The Angular frontend is built and served as static resources directly from the Spring Boot application, so the whole project ships as a single local artifact — no separate deployment or external services involved.
 
 More detailed architectural information can be found in [`docs/architecture`](docs/architecture/).
 
