@@ -1,7 +1,7 @@
 # Architecture
 
 ## 1. Overview
-FileManiac will use a layered architecture based on Clean Architecture principles. The main goal is to separate the application's business logic from the user interface, PDF processing libraries, file system, and other external dependencies.
+FileManiac is a **local-first application**: a Spring Boot backend (embedded server, bound to `localhost` only) paired with an Angular frontend, packaged as a single executable JAR. Spring Boot serves the built Angular static files directly (`ng build` output copied into `src/main/resources/static`), so there is no separate deployment, no external network exposure, and no Electron/Tauri wrapper needed. The application follows Clean Architecture principles: business logic stays independent from the UI, the API layer, PDF processing libraries, the file system, and other external dependencies.
 
 ## 2. Architectural Goals
 - Separation of concerns
@@ -9,38 +9,50 @@ FileManiac will use a layered architecture based on Clean Architecture principle
 - Maintainability
 - Low coupling
 - Replaceable infrastructure components
-- Local processing
+- **Local processing**: the embedded server binds only to `127.0.0.1`; no PDF or file data ever leaves the user's machine, and no data is sent to any external/cloud service
 
 ## 3. Architecture Style
+```
                  ┌──────────────────────┐
-                 │      Presentation    │
+                 │   Frontend (Angular) │   <- SPA, served locally by Spring Boot
+                 └──────────┬───────────┘
+                            │ HTTP (localhost only)
+                            ▼
+                 ┌──────────────────────┐
+                 │   API (Controllers)  │
                  └──────────┬───────────┘
                             │
                             ▼
-                 ┌──────────────────────┐
-                 │     Application      │
-                 └──────────┬───────────┘
-                            │           ▲     
-                            ▼           |
-                 ┌────────────────────┐ |
-                 │       Domain       │ |
-                 └────────────────────┘ |
-                            ▲           |
-                            │           |
-                 ┌──────────┴───────────┐
-                 │    Infrastructure    │
-                 └──────────────────────┘
+                 ┌───────────────────────┐
+                 │     Application       │
+                 └──────────┬────────────┘
+                            │            ▲
+                            ▼            │
+                 ┌────────────────────┐  │
+                 │       Domain       │  │
+                 └────────────────────┘  │
+                             ▲           │
+                             │           │
+                 ┌───────────┴───────────┐
+                 │    Infrastructure     │
+                 └───────────────────────┘
+```
 
 ## 4. System Components
-UI
-    User interface
-    ViewModels
+Frontend (Angular)
+    Components
+    Angular services (HTTP calls to the local API)
     User interaction
+
+API (Controllers)
+    REST Controllers (e.g. `MergePdfController`)
+    Request/Response DTOs
+    Exception handling (`@ControllerAdvice`)
 
 Application
     Use cases
     Application services
-    Interfaces
+    Interfaces (Java naming: `PdfService`)
     DTOs
 
 Domain
@@ -49,45 +61,52 @@ Domain
     Domain exceptions
 
 Infrastructure
-    PDF processing
-    File system
-    Logging
+    PDF processing (e.g. Apache PDFBox)
+    File system access
+    Logging (SLF4J/Logback)
     External libraries
 
 ## 5. Dependency Rules
 Domain
-    must not depend on any other project.
+    must not depend on any other layer.
 
 Application
     may depend on Domain.
 
+API (Controllers)
+    may depend on Application only (never directly on Infrastructure or Domain).
+
 Infrastructure
     may depend on Application and Domain.
 
-UI
-    may depend on Application.
+Frontend (Angular)
+    depends on the API only via HTTP calls (no compiled/code dependency) — it is packaged and served by Spring Boot, but remains logically decoupled from the backend layers.
 
 ## 6. Data Flow
 User
  ↓
-UI
+Frontend (Angular, in browser at localhost)
+ ↓ HTTP request
+MergePdfController
  ↓
 MergePdf Use Case
  ↓
-IPdfService
+PdfService (interface)
  ↓
-PDF Infrastructure
+PDF Infrastructure (Apache PDFBox)
  ↓
 Output File
+ ↓ HTTP response
+Frontend (Angular) shows result to user
 
 ## 7. PDF Processing
 Application
     ↓
-IPdfService
+PdfService (interface)
     ↑
-PdfService
+PdfServiceImpl (Infrastructure)
     ↓
-PDF Library
+PDF Library (Apache PDFBox)
 
 ## 8. Error Handling
 Invalid PDF
@@ -96,7 +115,9 @@ Infrastructure
     ↓
 Application exception/result
     ↓
-UI
+API (`@ControllerAdvice` maps to a clean HTTP error response)
+    ↓
+Frontend (Angular)
     ↓
 User-friendly message
 
@@ -115,14 +136,18 @@ Do not log:
 
 ## 10. Testing Strategy
 Domain
-    → Unit tests
+    → Unit tests (JUnit 5)
 
 Application
-    → Unit tests
-    → Integration tests
+    → Unit tests (JUnit 5)
+    → Integration tests (Spring Boot Test)
+
+API (Controllers)
+    → Integration/contract tests (MockMvc / WebTestClient)
 
 Infrastructure
     → Integration tests
 
-UI
-    → UI tests (future)
+Frontend (Angular)
+    → Unit tests (Jasmine/Karma)
+    → E2E tests (future)
