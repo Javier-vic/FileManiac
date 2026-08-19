@@ -1,65 +1,60 @@
-# Build output
-**/bin/
-**/obj/
+# --- Backend build output (Maven) ---
+backend/target/
+*.class
 
-# Visual Studio
-.vs/
-*.user
-*.suo
-*.userosscache
-*.sln.docstates
+# --- Frontend build output (Angular/Node) ---
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/npm-debug.log*
 
-# Rider / JetBrains
+# --- IntelliJ IDEA / Rider ---
 .idea/
-*.sln.iml
+*.iml
+*.ipr
+*.iws
 
-# Visual Studio Code
+# --- Eclipse ---
+.classpath
+.project
+.settings/
+
+# --- Visual Studio Code ---
 .vscode/
 
-# Test results
-TestResults/
-*.trx
-*.coverage
-*.coveragexml
-
-# Code coverage
+# --- Test results ---
+backend/target/surefire-reports/
+backend/target/failsafe-reports/
 coverage/
 coverage-report/
 
-# NuGet
-*.nupkg
-*.snupkg
-**/packages/
-.nuget/
-
-# Logs
+# --- Logs ---
 logs/
 *.log
 
-# Temporary files
+# --- Temporary files ---
 tmp/
 temp/
 *.tmp
 *.temp
 
-# Application data
+# --- Application data ---
 data/
 *.db
 *.db-shm
 *.db-wal
 
-# Generated files
+# --- Generated files ---
 generated/
 artifacts/
 
-# OS generated files
+# --- OS generated files ---
 
 # Windows
 Thumbs.db
 Thumbs.db:encryptable
 ehthumbs.db
 ehthumbs_vista.db
-*.stackdump
 [Dd]esktop.ini
 
 # macOS
@@ -70,38 +65,28 @@ ehthumbs_vista.db
 # Linux
 *~
 
-# User-specific files
-*.user
-*.rsuser
+# --- Local configuration ---
+backend/src/main/resources/application-local.properties
+backend/src/main/resources/application-local.yml
+frontend/src/environments/environment.local.ts
 
-# ReSharper
-_ReSharper*/
-*.[Rr]e[Ss]harper
-*.DotSettings.user
-
-# Publish output
-publish/
-**/publish/
-
-# Local configuration
-appsettings.Development.json
-appsettings.Local.json
-
-# Environment variables
+# --- Environment variables ---
 .env
 .env.*
 !.env.example
 
-# Secrets and credentials
+# --- Secrets and credentials ---
 secrets.json
 *.pfx
 *.p12
+*.jks
+*.keystore
 
-# Local development files
+# --- Local development files ---
 .local/
 .localsettings/
 
-# FileManiac temporary PDF files
+# --- FileManiac temporary PDF files ---
 *.pdf.tmp
 *.pdf.part
 *.pdf.bak
